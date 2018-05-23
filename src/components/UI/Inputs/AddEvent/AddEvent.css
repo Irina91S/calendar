@@ -1,0 +1,28 @@
+.AddEvent {
+	width: 100%;
+	padding: 15px;
+	box-sizing: border-box;
+}
+
+.Label {
+	font-weight: bold;
+	display: block;
+	margin-bottom: 10px;
+}
+
+.InputElement {
+	outline: none;
+	border: 1px solid #1B503E;
+	box-sizing: border-box;
+	background-color: white;
+	font: inherit;
+	padding: 5px 10px;
+	display: block;
+	width: 100%;
+}
+
+.InputElement:focus {
+	outline: none;
+	background-color: #E5E0E3;
+	cursor: pointer;
+}

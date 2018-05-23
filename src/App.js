@@ -1,14 +1,12 @@
 import React, { Component } from 'react';
-import img from '../src/assets/images/logo.png';
-import classes from './App.css';
+
+import Layout from './hoc/Layout/Layout';
 
 class App extends Component {
   render() {
     return (
-      <div className="App">
-        <header className={classes.Header}>
-          <img src={img} className={classes.Logo} alt="logo" />
-        </header>
+      <div>
+        <Layout />
       </div>
     );
   }

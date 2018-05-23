@@ -1,0 +1,11 @@
+.Calendar {
+	padding: 20px;
+	box-shadow: 10px 10px 32px 1px rgba(13,44,20,1);
+}
+
+
+.Calendar button {
+	background-color: rgb(13,44,20);
+	border-radius: 67px 67px 67px 67px;
+	color: #DBD3D8;
+}
