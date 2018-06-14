@@ -1,65 +1,49 @@
 import React, {Component} from 'react';
+import $ from 'jquery';
+import 'fullcalendar';
+//import { connect } from 'react-redux';
 
-import Input from '../components/UI/Inputs/AddEvent/AddEvent';
+import Input from '../components/UI/Inputs/AddEvent/Input';
+import Button from '../components/UI/Button/Button';
+//import {addingEvent} from '../../store/actions/actions';
 
 class Form extends Component {
+	
+	addEvent = (event) => {
+		event.preventDefault();
+		const formData = {};
 
-	state = {
-		eventForm:{
-			type: {
-				elementType:'select',
-				elementConfig: {
-					options: [
-						{value: 'call', displayValue:'Call' },
-						{value: 'meeting', displayValue:'Meeting'},
-						{value: 'appointment', displayValue:'Appointment'},
-						{value: 'holliday', displayValue:'Holliday'}
-					]
-				},
-				value: ''
-			},
+		for (let formElementIdentifier in this.props.eventForm){
+			formData[formElementIdentifier] = this.props.eventForm[formElementIdentifier].value;
+		};
 
-			title: {
-				elementType:'input',
-				elementConfig: {
-					type: 'text',
-					placeholder: 'Event title'
-				},
-				value: ''
-			},
+		if (this.props.latestDate.isValid()) {
+			let eventType = this.props.eventForm.type.value;
 
-			duration: {
-				elementType:'input',
-				elementConfig: {
-					type: 'text',
-					placeholder: 'Event duration'
-				},
-				value: ''
-			},
+			if(eventType === '') {
+				eventType = 'Call';
+			}
 
-			description:{
-				elementType:'input',
-				elementConfig: {
-					type: 'text',
-					placeholder: 'Event description'
-				},
-				value: ''
-			} 
+			$('.calendar').fullCalendar('renderEvent', {
+				myType: eventType,
+				title: this.props.eventForm.title.value + " - " + eventType,
+				start: this.props.latestDate,
+				description: this.props.eventForm.description.value,
+				allDay: true,
+			});
 		}
+		this.props.backdropClickHandler();
+		this.props.setEventsToLocalStorage()
 	}
 
-	addingEventHandler = (event) => {
-		event.preventDefault();
-
-		const formData = {};
-		for (let formElementIdentifier in this.state.eventForm){
-			formData[formElementIdentifier] = this.state.eventForm[formElementIdentifier].value;
-		}
+	editEvent = (event) => {
+		this.props.editCalendarEvent();
+		this.props.setEventsToLocalStorage();
 	}
 
 	inputChangedHandler = (event, inputIdentifier) => {
 		const updatedEventForm = {
-			...this.state.eventForm,
+			...this.props.eventForm,
 		};
 
 		const updatedFormElement = {
@@ -68,19 +52,19 @@ class Form extends Component {
 
 		updatedFormElement.value= event.target.value;
 		updatedEventForm[inputIdentifier] = updatedFormElement;
-		this.setState({ eventForm: updatedEventForm})
+
+		this.props.changeEventFormState(updatedEventForm);
 	}
 
 	render(){
-
 		const formElementsArray = [] ;
-		for( let key in this.state.eventForm){
+		for( let key in this.props.eventForm){
 			formElementsArray.push({
 				id: key,
-				config: this.state.eventForm[key]
+				config: this.props.eventForm[key]
 			});
-		}	
-	
+		};	
+
 		let form = (
 			<form> 
 				{formElementsArray.map( formElement => (
@@ -91,6 +75,13 @@ class Form extends Component {
 						value={formElement.config.value}
 						changed={(event) => this.inputChangedHandler(event, formElement.id)}/>
 				))}
+				{this.props.isEditable ? <Button {...this.props}
+					editEvent={this.editEvent}
+				    backdropClickHandler = {this.backdropClickHandler}>Edit Event
+				</Button> : <Button {...this.props}
+					addEvent={this.addEvent}
+				    backdropClickHandler = {this.backdropClickHandler}>Add Event
+				</Button>}
 			</form>
 		)
 
@@ -98,7 +89,21 @@ class Form extends Component {
 			<div>
 				{form}
 			</div>
-		);
+			);
 	}
 } 
+
+// const mapStateToProps = state => {
+// 	return {
+// 		evtForm: state.eventForm,
+// 		lastestDate: state.lastestDate
+// 	}
+// };
+
+// const mapDispatchToProps = dispatch =>{
+// 	return {
+// 		onAddEvent : () => dispatch(addingEvent())
+// 	}
+// };
+
 export default Form;
